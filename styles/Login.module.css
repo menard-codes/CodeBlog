@@ -1,0 +1,11 @@
+
+.loginTitleContainer {
+    display: flex;
+    align-items: flex-start;
+}
+
+.login {
+    display: grid;
+    place-items: center;
+    height: 80vh;
+}
