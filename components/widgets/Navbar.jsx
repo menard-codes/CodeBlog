@@ -22,15 +22,14 @@ Navbar consists of:
 function Navbar() {
     const [user] = useAuthState(auth);
     const router = useRouter();
+    const handleSignOut = () => {
+        auth.signOut();
+        router.push('/login');
+    }
 
     return (
         <nav className={NavbarStyles.navbar}>
             <div className={NavbarStyles.leftContainer}>
-                {/* <button className={NavbarStyles.hamburger} onClick={() => setExpand(!expand)} >
-                    <div className={NavbarStyles.rectangle}></div>
-                    <div className={NavbarStyles.rectangle}></div>
-                    <div className={NavbarStyles.rectangle}></div>
-                </button> */}
                 <Link href="/">
                     <a>
                         <Logo />
@@ -51,8 +50,8 @@ function Navbar() {
             <div className={NavbarStyles.rightContainer}>
                 {user && (
                     <>
-                        <button className={NavbarStyles.signOutBtn} onClick={() => auth.signOut()}>Sign Out</button>
-                        <Link href={`/user/${user.uid}`}>
+                        <button className={NavbarStyles.signOutBtn} onClick={handleSignOut}>Sign Out</button>
+                        <Link href={'/user'}>
                             <a className={NavbarStyles.avatarContainer}>
                                 <Image
                                     src={user.photoURL}
