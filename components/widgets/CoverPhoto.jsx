@@ -13,7 +13,6 @@ function CoverPhoto({ url }) {
                     background-position: center; 
                     height: 30vh;
                     width: 100vw;
-                    margin-top: 10px;
                 }
             `}</style>
         </div>

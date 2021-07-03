@@ -1,0 +1,56 @@
+
+.fileUpload {
+    display: none;
+}
+
+.fileUploadContainer {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.fileUploadContainer:hover {
+    background-color: #ccc;
+}
+
+.successUpload {
+    padding: 10px;
+    background-color: darkseagreen;
+    border-radius: 10px;
+    display: inline-flex;
+    width: 100%;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.copy {
+    margin-left: 20px;
+    padding: 10px;
+    background-color: rgb(210, 241, 210);
+    color: rgb(0, 126, 0);
+    border-radius: 10px;
+    border: 2px solid rgb(0, 126, 0);
+    cursor: pointer;
+}
+
+.copy:hover {
+    background-color: white;
+}
+
+.exitBtn {
+    cursor: pointer;
+    color: rgb(0, 138, 0);
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 1.2rem;
+    background-color: transparent;
+    border: none;
+    margin-right: 5px;
+}
+
+.mutedText {
+    color: rgb(73, 73, 73);
+    padding-left: 10px;
+    overflow: hidden;
+}

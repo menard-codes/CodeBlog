@@ -20,7 +20,7 @@ Navbar consists of:
 */
 
 function Navbar() {
-    const [user] = useAuthState(auth);
+    const [user, loading, error] = useAuthState(auth);
     const router = useRouter();
     const handleSignOut = () => {
         auth.signOut();
@@ -41,11 +41,14 @@ function Navbar() {
                             <a>Write Blog</a>
                         </Link>
                     )
-                    : (
-                        <Link href="/login">
-                            <a>Log In</a>
-                        </Link>
-                    )}
+                    : (loading || error)
+                        ? null
+                        : (
+                            <Link href="/login">
+                                <a>Log In</a>
+                            </Link>
+                        )
+                    }
             </div>
             <div className={NavbarStyles.rightContainer}>
                 {user && (

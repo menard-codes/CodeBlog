@@ -1,5 +1,8 @@
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../app/firebaseApp';
+import { useDownloadURL } from 'react-firebase-hooks/storage';
+import { auth, storage } from '../app/firebaseApp';
+
+import { useRouter } from 'next/router';
 
 import Error from '../components/elements/Error';
 import Loading from '../components/elements/Loading';
@@ -16,20 +19,30 @@ Auth rules: LogIn required
 // TODO: Set security later, maybe in firestore
 export default function User() {
     const [user, loading, error] = useAuthState(auth);
+    const router = useRouter();
 
     if (error) return <Error msg={error} />
     else if (loading) return <Loading />
 
-    return (
-        <>
-        <CoverPhoto url="/cover.jpg" />
-        <div>
-            <div className={UserStyles.userInfo}>
-                <Avatar url={user.photoURL} />
-                <h1>{user.displayName}</h1>
-                <p className={UserStyles.mutedText}>{user.email}</p>
+    else if (user) {
+        return (
+            <>
+            <CoverPhoto url="/cover.jpg" />
+            <div>
+                <div className={UserStyles.userInfo}>
+                    <Avatar url={user.photoURL} />
+                    <h1>{user.displayName}</h1>
+                    <p className={UserStyles.mutedText}>{user.email}</p>
+                </div>
             </div>
+            </>
+        )
+    }
+
+    router.push('/login');
+    return (
+        <div>
+            <h1>Forbidden</h1>
         </div>
-        </>
     )
 }
