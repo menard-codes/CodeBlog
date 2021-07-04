@@ -1,10 +1,4 @@
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../app/firebaseApp';
-
-import Error from '../../components/elements/Error';
-import Loading from '../../components/elements/Loading';
-
-import { useRouter } from 'next/router';
+import { firestore } from '../../app/firebaseApp';
 
 /*
 Auth Rule: Role Based
@@ -32,40 +26,45 @@ Auth Rule: Role Based
             read only
 */
 
-export default function Blog({ id, name }) {
-    const [ user, loading, error ] = useAuthState(auth)
-    const router = useRouter()
-
-    if (error) return <Error msg={error} />
-    else if (loading) return <Loading />
-
-    else if (user) {
-        // TODO: Further check if uid === blog id. True: Author, False: Reader
+export default function Blog(props) {
+    if (props.data) {
         return (
-            <div>
-                <h1>Title: {name}</h1>
-                <p>ID: {id}</p>
-                <h2>Logged In</h2>
+            <div style={{display: "grid", placeItems: "center", fontSize: "1.5rem"}}>
+                <div style={{width: '50vw', marginTop: '30px'}} dangerouslySetInnerHTML={{__html: props.data.html}}></div>
             </div>
         )
+    } else if (props.error === 404) {
+        return <h1>Not Found</h1>
     }
-
-    return (
-        <div>
-            <h1>Title: {name}</h1>
-            <p>ID: {id}</p>
-            <h2>Anonymous</h2>
-        </div>
-    )
+    return <h1>Error</h1>
 }
 
 export async function getStaticPaths() {
-    // mock paths
-    const nums = [1, 2, 3, 4];
-    return {paths: nums.map(num => ({params: {id: `${num}`}})), fallback: false}
+    // TODO: make efficient querying, since the foreach just gets id
+
+    // get list of ids
+    const collectionRef = firestore.collection('blogs');
+    const docsSnapshot = await collectionRef.get();
+    const paths = [];
+    docsSnapshot.forEach(blog => {
+        paths.push({
+            params: {id: blog.id}
+        })
+    })
+    return {paths, fallback: false}
 }
 
 export async function getStaticProps({ params }) {
-    // mock props
-    return {props: {id: params.id, name: `Next.js ${params.id}`}}
+    // get blog id
+    // retrieve blog
+    const docRef = firestore.collection('blogs').doc(params.id)
+    const blog = await docRef.get();
+    if (blog.exists) {
+        const data = blog.data()
+        data.createdAt = Date(data.createdAt)
+        return {
+            props: { data }
+        }
+    }
+    return {props: {error: 404}}
 }

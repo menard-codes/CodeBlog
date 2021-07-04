@@ -1,0 +1,35 @@
+
+.blogSnapshotWidget {
+    border-top: 2px solid rgb(155, 155, 155);
+    border-bottom: 2px solid rgb(155, 155, 155);
+    padding: 20px 0;
+    margin: -2px 0;
+}
+
+.authorComp {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.authorDetails {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.authorName {
+    margin: 0;
+}
+
+.avatar {
+    border-radius: 50%;
+}
+
+.blogComp {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 10px;
+    margin: 20px;
+    padding: 1px 20px 20px 20px;
+}

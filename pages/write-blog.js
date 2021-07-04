@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../app/firebaseApp';
+import { auth, firestore, firebase } from '../app/firebaseApp';
 
 import { useRouter } from 'next/router';
+
+import matter from 'gray-matter';
+import remark from 'remark';
+import html from 'remark-html';
 
 import { parseMdToHtml } from '../utils/parseMdToHtml';
 
@@ -26,6 +30,7 @@ Parsing Markdown:
     Saving (uses parsed md: out -> firestore)
     Preview (uses parsed md: out -> render)
 Saving: {util: firestore interaction}
+    Will Redirect to blog page
     Publish (uses firestore to save data. property status: published)
     Draft (uses firestore to save data. property status: draft)
 */
@@ -34,14 +39,15 @@ Saving: {util: firestore interaction}
 NOTE: Prototype version just saves the blog to Firebase
 TODO: Integrate with Headless-CMS (Contentful)
 TODO: Sanitize the HTML from markdown
+
 */
 
 export default function Blog() {
-    const [ user, loading, error ] = useAuthState(auth);
-    const router = useRouter();
+    const [user, loading, error] = useAuthState(auth);
     const [blog, setBlog] = useState('');
-    const [htmlBlog, setHtmlBlog] = useState('');
     const [onEdit, setOnEdit] = useState(true);
+    const [htmlBlog, setHtmlBlog] = useState('');
+    const router = useRouter();
     const previewStyle = `
         <style>
             img {
@@ -49,6 +55,26 @@ export default function Blog() {
             }
         </style>
     `
+
+    // TODO: Add loading status when uploading
+    // TODO: Improve uploading UI
+    const handleSaving = status => {
+        const matterRes = matter(blog);
+        // parse md to html
+        remark().use(html).process(matterRes.content).then(processed => {
+            const blogData = {
+                html: `${processed.toString()}\n${previewStyle}`,
+                status,
+                owner: user.uid,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }
+            const docRef = firestore.collection('blogs').add(blogData).then(docRef => {
+                // get doc id and redirect
+                const { id } = docRef;
+                router.push(`/blog/${id}`);
+            })
+        })
+    }
 
     useEffect(() => {
         !onEdit && parseMdToHtml(blog).then(parsed => setHtmlBlog(`${parsed}\n${previewStyle}`))
@@ -63,8 +89,8 @@ export default function Blog() {
                 <div className={WriteBlogStyles.innerBox}>
                     <h1>Write Your Tech Blog</h1>
                     <div className={WriteBlogStyles.btnContainer}>
-                        <button className={WriteBlogStyles.publish}>Publish</button>
-                        <button className={WriteBlogStyles.btn}>Save Draft</button>
+                        <button className={WriteBlogStyles.publish} onClick={() => handleSaving('published')}>Publish</button>
+                        <button className={WriteBlogStyles.btn} onClick={() => handleSaving('draft')}>Save Draft</button>
                         <button className={WriteBlogStyles.btn} onClick={() => setOnEdit(!onEdit)}>{onEdit ? 'Preview' : 'Edit'}</button>
                     </div>
                     {
