@@ -21,7 +21,7 @@ function BlogSnapshot({ blogTitle, blogSnapshot, blogId }) {
     return (
         <div className={BlogSnapshotStyles.blogComp}>
             <h2>{blogTitle}</h2>
-            <p>{blogSnapshot}</p>
+            <p>{blogSnapshot}...</p>
             <Link href={`/blog/${blogId}`}>
                 <a>Read More...</a>
             </Link>
